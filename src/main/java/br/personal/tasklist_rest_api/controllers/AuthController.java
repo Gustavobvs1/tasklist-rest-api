@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("auth")
+@RequestMapping(path = "/auth")
 public class AuthController {
 
     @Autowired
@@ -32,7 +32,7 @@ public class AuthController {
     @Autowired
     private TokenService tokenService;
 
-    @PostMapping("/register")
+    @PostMapping(path = "/register")
     public ResponseEntity<AuthResponseDTO> register(@RequestBody RegisterDTO body) {
         if(this.userRepository.findByEmail(body.email()) != null) return ResponseEntity.status(HttpStatus.CONFLICT).build();
 
@@ -43,10 +43,10 @@ public class AuthController {
 
         var token = this.tokenService.generateToken(newUser);
 
-        return ResponseEntity.ok().body(new AuthResponseDTO(token));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new AuthResponseDTO(token));
     }
 
-    @PostMapping("/login")
+    @PostMapping(path = "/login")
     public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginDTO body) {
         var usernamePassword = new UsernamePasswordAuthenticationToken(body.email(),body.password());
         var auth = this.authenticationManager.authenticate(usernamePassword);

@@ -2,6 +2,7 @@ package br.personal.tasklist_rest_api.infra.security;
 
 import br.personal.tasklist_rest_api.domain.model.user.User;
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
@@ -38,10 +39,9 @@ public class TokenService {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
 
-            return JWT.require(algorithm)
-                    .build()
-                    .verify(token)
-                    .getSubject();
+            String userEmail = JWT.require(algorithm).build().verify(token).getSubject();
+
+            return userEmail;
         }
         catch (JWTVerificationException e) {
             return null;

@@ -27,11 +27,10 @@ public class SecurityConfig {
         return httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/users/**").hasRole("USER")
-                        .requestMatchers("users/all").hasRole("MODERATOR")
-                        .requestMatchers(HttpMethod.POST, "auth/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "h2-console").permitAll()
-                        .anyRequest().authenticated())
+                        .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
+                        .requestMatchers("/tasks").hasAnyRole("U", "ADM")
+                        .requestMatchers("/tasks/{id}").hasAnyRole("U", "ADM")
+                        .requestMatchers("/tasks/all").hasAnyRole("MODERATOR", "ADM"))
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

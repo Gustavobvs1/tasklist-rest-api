@@ -1,9 +1,6 @@
 package br.personal.tasklist_rest_api.services.impl;
 
-import br.personal.tasklist_rest_api.domain.model.task.Task;
-import br.personal.tasklist_rest_api.domain.model.task.TaskCreateDTO;
-import br.personal.tasklist_rest_api.domain.model.task.TaskStatus;
-import br.personal.tasklist_rest_api.domain.model.task.TaskUpdateDTO;
+import br.personal.tasklist_rest_api.domain.model.task.*;
 import br.personal.tasklist_rest_api.domain.model.user.User;
 import br.personal.tasklist_rest_api.domain.repositories.TaskRepository;
 import br.personal.tasklist_rest_api.domain.repositories.UserRepository;
@@ -59,14 +56,13 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<Task> findByUserId(String userId) {
-        User user = this.userRepository.findById(userId).orElseThrow(NoSuchElementException::new);
-
-        return user.getTasks();
+    public List<TaskResponseDTO> findByUserEmail(String userEmail) {
+        User user = (User) this.userRepository.findByEmail(userEmail);
+        return user.getTasks().stream().map(TaskResponseDTO::new).toList();
     }
 
     @Override
-    public List<Task> findAll() {
-        return this.taskRepository.findAll();
+    public List<TaskResponseDTO> findAll() {
+        return this.taskRepository.findAll().stream().map(TaskResponseDTO::new).toList();
     }
 }

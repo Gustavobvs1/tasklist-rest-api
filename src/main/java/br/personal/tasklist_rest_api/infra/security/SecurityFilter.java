@@ -32,9 +32,9 @@ public class SecurityFilter extends OncePerRequestFilter {
             UserDetails user = this.userRepository.findByEmail(email);
 
             var authentication = new UsernamePasswordAuthenticationToken(user,null,user.getAuthorities());
-
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
+        filterChain.doFilter(request,response);
     }
 
     private String recoverToken(HttpServletRequest request) {
