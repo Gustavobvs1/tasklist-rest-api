@@ -34,7 +34,6 @@ public class TaskController {
 
     @GetMapping
     public ResponseEntity<List<TaskResponseDTO>> findByUserEmail(@AuthenticationPrincipal UserDetails userDetails) {
-        System.out.println(userDetails.getUsername());
         return ResponseEntity.ok().body(this.taskService.findByUserEmail(userDetails.getUsername()));
     }
 
@@ -51,8 +50,8 @@ public class TaskController {
     }
 
     @GetMapping(path = "/all")
-    public ResponseEntity<List<TaskResponseDTO>> findAll() {
+    public ResponseEntity<List<TaskResponseDTO>> findAllTasksDTO() {
 
-        return ResponseEntity.ok().body(this.taskService.findAll());
+        return ResponseEntity.ok().body(this.taskService.findAllTasksDTO());
     }
 }

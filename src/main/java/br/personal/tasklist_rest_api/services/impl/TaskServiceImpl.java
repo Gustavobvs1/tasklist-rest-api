@@ -62,7 +62,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<TaskResponseDTO> findAll() {
-        return this.taskRepository.findAll().stream().map(TaskResponseDTO::new).toList();
+    public List<TaskResponseDTO> findAllTasksDTO() {
+        return this.taskRepository.findAllTasksDTO();
     }
 }

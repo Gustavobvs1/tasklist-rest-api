@@ -18,5 +18,5 @@ public interface TaskService {
 
     void delete(String id);
 
-    List<TaskResponseDTO> findAll();
+    List<TaskResponseDTO> findAllTasksDTO();
 }
