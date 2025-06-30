@@ -6,6 +6,7 @@ import br.personal.tasklist_rest_api.domain.model.user.RegisterDTO;
 import br.personal.tasklist_rest_api.domain.model.user.User;
 import br.personal.tasklist_rest_api.domain.repositories.UserRepository;
 import br.personal.tasklist_rest_api.infra.security.TokenService;
+import br.personal.tasklist_rest_api.services.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,35 +25,17 @@ import java.util.List;
 public class AuthController {
 
     @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private TokenService tokenService;
+    private AuthService authService;
 
     @PostMapping(path = "/register")
     public ResponseEntity<AuthResponseDTO> register(@RequestBody RegisterDTO body) {
-        if(this.userRepository.findByEmail(body.email()) != null) return ResponseEntity.status(HttpStatus.CONFLICT).build();
 
-        String encryptedPassword = new BCryptPasswordEncoder().encode(body.password());
-        User newUser = new User(body.name(), body.email(), encryptedPassword, body.role());
-
-        this.userRepository.save(newUser);
-
-        var token = this.tokenService.generateToken(newUser);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(new AuthResponseDTO(token));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new AuthResponseDTO(this.authService.register(body)));
     }
 
     @PostMapping(path = "/login")
     public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginDTO body) {
-        var usernamePassword = new UsernamePasswordAuthenticationToken(body.email(),body.password());
-        var auth = this.authenticationManager.authenticate(usernamePassword);
 
-        var token = this.tokenService.generateToken((User) auth.getPrincipal());
-
-        return ResponseEntity.ok().body(new AuthResponseDTO(token));
+        return ResponseEntity.ok().body(new AuthResponseDTO(this.authService.login(body)));
     }
 }
