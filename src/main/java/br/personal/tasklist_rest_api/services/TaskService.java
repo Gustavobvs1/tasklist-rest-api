@@ -8,15 +8,16 @@ import br.personal.tasklist_rest_api.domain.model.task.TaskUpdateDTO;
 
 import java.util.List;
 
+
 public interface TaskService {
 
     List<TaskResponseDTO> findByUserEmail(String userEmail);
 
     void create(TaskCreateDTO taskCreateDTO, String userEmail);
 
-    void update(TaskUpdateDTO taskUpdateDTO, String id);
+    void update(TaskUpdateDTO taskUpdateDTO, String id, String userEmail);
 
-    void delete(String id);
+    void delete(String id, String userEmail);
 
     List<TaskResponseDTO> findAllTasksDTO();
 }

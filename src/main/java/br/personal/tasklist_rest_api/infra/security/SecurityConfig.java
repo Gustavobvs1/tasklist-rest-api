@@ -22,12 +22,16 @@ public class SecurityConfig {
     @Autowired
     private SecurityFilter securityFilter;
 
+
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
+                        .requestMatchers("/docs/**").permitAll()
+                        .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers(HttpMethod.GET,"/tasks/all").hasRole("MODERATOR")
                         .requestMatchers("/tasks").hasRole( "USER")
                         .requestMatchers("/tasks/{id}").hasRole("USER"))

@@ -27,15 +27,21 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
+    @Autowired
+    private TokenService tokenService;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
     @PostMapping(path = "/register")
     public ResponseEntity<AuthResponseDTO> register(@RequestBody RegisterDTO body) {
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(new AuthResponseDTO(this.authService.register(body)));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new AuthResponseDTO(this.authService.register(body, this.tokenService)));
     }
 
     @PostMapping(path = "/login")
     public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginDTO body) {
 
-        return ResponseEntity.ok().body(new AuthResponseDTO(this.authService.login(body)));
+        return ResponseEntity.ok().body(new AuthResponseDTO(this.authService.login(body, this.authenticationManager, this.tokenService)));
     }
 }

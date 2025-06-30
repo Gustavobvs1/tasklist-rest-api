@@ -25,6 +25,7 @@ public class TaskController {
     @Autowired
     private TaskService taskService;
 
+
     @PostMapping
     public ResponseEntity<?> create(@RequestBody TaskCreateDTO body, @AuthenticationPrincipal UserDetails userDetails) {
         this.taskService.create(body, userDetails.getUsername());
@@ -38,14 +39,14 @@ public class TaskController {
     }
 
     @PutMapping(path = "/{id}")
-    public ResponseEntity<?> update(@RequestBody TaskUpdateDTO body, @PathVariable("id") String id) {
-        this.taskService.update(body,id);
+    public ResponseEntity<?> update(@RequestBody TaskUpdateDTO body, @PathVariable("id") String id, @AuthenticationPrincipal UserDetails userDetails) {
+        this.taskService.update(body,id, userDetails.getUsername());
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity<?> delete(@PathVariable String id) {
-        this.taskService.delete(id);
+    public ResponseEntity<?> delete(@PathVariable String id, @AuthenticationPrincipal UserDetails userDetails) {
+        this.taskService.delete(id, userDetails.getUsername());
         return ResponseEntity.ok().build();
     }
 

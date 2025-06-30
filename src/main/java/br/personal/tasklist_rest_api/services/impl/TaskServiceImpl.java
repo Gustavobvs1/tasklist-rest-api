@@ -2,6 +2,7 @@ package br.personal.tasklist_rest_api.services.impl;
 
 import br.personal.tasklist_rest_api.domain.model.task.*;
 import br.personal.tasklist_rest_api.domain.model.user.User;
+import br.personal.tasklist_rest_api.domain.model.user.UserRole;
 import br.personal.tasklist_rest_api.domain.repositories.TaskRepository;
 import br.personal.tasklist_rest_api.domain.repositories.UserRepository;
 import br.personal.tasklist_rest_api.services.TaskService;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -37,21 +37,30 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void update(TaskUpdateDTO body, String id) {
-        Task newTask = this.taskRepository.findById(id).orElseThrow(NoSuchElementException::new);
+    public void update(TaskUpdateDTO body, String id, String userEmail) {
+        User user = (User) this.userRepository.findByEmail(userEmail);
 
-        newTask.setTitle(body.title());
-        newTask.setDescription(body.description());
-        newTask.setTaskStatus(body.taskStatus());
-        newTask.setTaskPriority(body.taskPriority());
+        if(user.getTasks().stream().noneMatch(task -> task.getId().equals(id))  && user.getRole() == UserRole.USER) throw new RuntimeException("marilene");
 
-        newTask.setUpdatedAt(LocalDateTime.now());
+        Task newTask = this.taskRepository.findById(id).orElseThrow(RuntimeException::new);
 
-        this.taskRepository.save(newTask);
+            newTask.setTitle(body.title());
+            newTask.setDescription(body.description());
+            newTask.setTaskStatus(body.taskStatus());
+            newTask.setTaskPriority(body.taskPriority());
+
+            newTask.setUpdatedAt(LocalDateTime.now());
+
+            this.taskRepository.save(newTask);
+
     }
 
     @Override
-    public void delete(String id) {
+    public void delete(String id, String userEmail) {
+        User user = (User) this.userRepository.findByEmail(userEmail);
+
+        if(user.getTasks().stream().noneMatch(task -> task.getId().equals(id)) && user.getRole() == UserRole.USER) throw new RuntimeException("marilene");
+
         this.taskRepository.deleteById(id);
     }
 

@@ -21,11 +21,6 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private TokenService tokenService;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -33,7 +28,7 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
     }
 
     @Override
-    public String register(RegisterDTO body) {
+    public String register(RegisterDTO body, TokenService tokenService) {
         if(this.userRepository.findByEmail(body.email()) != null) throw new RuntimeException("");
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(body.password());
@@ -41,14 +36,14 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
 
         this.userRepository.save(newUser);
 
-        return this.tokenService.generateToken(newUser);
+        return tokenService.generateToken(newUser);
     }
 
     @Override
-    public String login(LoginDTO body) {
+    public String login(LoginDTO body, AuthenticationManager authenticationManager, TokenService tokenService) {
         var usernamePassword = new UsernamePasswordAuthenticationToken(body.email(),body.password());
-        var auth = this.authenticationManager.authenticate(usernamePassword);
+        var auth = authenticationManager.authenticate(usernamePassword);
 
-        return this.tokenService.generateToken((User) auth.getPrincipal());
+        return tokenService.generateToken((User) auth.getPrincipal());
     }
 }
