@@ -20,6 +20,7 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
+    @Column(nullable = false)
     private String title;
 
     private String description;
@@ -30,6 +31,7 @@ public class Task {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(nullable = false)
     private TaskPriority taskPriority;
 
     private TaskStatus taskStatus;

@@ -30,7 +30,9 @@ public class TaskController {
     public ResponseEntity<?> create(@RequestBody TaskCreateDTO body, @AuthenticationPrincipal UserDetails userDetails) {
         this.taskService.create(body, userDetails.getUsername());
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
+
+        return ResponseEntity.created(location).body(location);
     }
 
     @GetMapping
@@ -41,13 +43,13 @@ public class TaskController {
     @PutMapping(path = "/{id}")
     public ResponseEntity<?> update(@RequestBody TaskUpdateDTO body, @PathVariable("id") String id, @AuthenticationPrincipal UserDetails userDetails) {
         this.taskService.update(body,id, userDetails.getUsername());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<?> delete(@PathVariable String id, @AuthenticationPrincipal UserDetails userDetails) {
         this.taskService.delete(id, userDetails.getUsername());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping(path = "/all")

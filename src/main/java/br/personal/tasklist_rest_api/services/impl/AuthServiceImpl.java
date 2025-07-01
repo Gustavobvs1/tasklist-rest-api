@@ -29,7 +29,7 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
 
     @Override
     public String register(RegisterDTO body, TokenService tokenService) {
-        if(this.userRepository.findByEmail(body.email()) != null) throw new RuntimeException("");
+        if(this.userRepository.findByEmail(body.email()) != null) throw new IllegalArgumentException();
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(body.password());
         User newUser = new User(body.name(), body.email(), encryptedPassword, body.role());

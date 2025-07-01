@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.InputMismatchException;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -23,11 +25,10 @@ public class TaskServiceImpl implements TaskService {
 
 
     @Override
-    public void create(TaskCreateDTO body, String userEmail) {
+    public void create(TaskCreateDTO body, String userEmail){
         User user = (User) this.userRepository.findByEmail(userEmail);
 
         Task newTask = new Task(body);
-
         newTask.setCreatedAt(LocalDateTime.now());
         newTask.setUpdatedAt(LocalDateTime.now());
         newTask.setTaskStatus(TaskStatus.PENDING);
@@ -40,9 +41,9 @@ public class TaskServiceImpl implements TaskService {
     public void update(TaskUpdateDTO body, String id, String userEmail) {
         User user = (User) this.userRepository.findByEmail(userEmail);
 
-        if(user.getTasks().stream().noneMatch(task -> task.getId().equals(id))  && user.getRole() == UserRole.USER) throw new RuntimeException("marilene");
+        if(user.getTasks().stream().noneMatch(task -> task.getId().equals(id))  && user.getRole() == UserRole.USER) throw new NoSuchElementException();
 
-        Task newTask = this.taskRepository.findById(id).orElseThrow(RuntimeException::new);
+        Task newTask = this.taskRepository.findById(id).orElseThrow(NoSuchElementException::new);
 
             newTask.setTitle(body.title());
             newTask.setDescription(body.description());
@@ -59,7 +60,9 @@ public class TaskServiceImpl implements TaskService {
     public void delete(String id, String userEmail) {
         User user = (User) this.userRepository.findByEmail(userEmail);
 
-        if(user.getTasks().stream().noneMatch(task -> task.getId().equals(id)) && user.getRole() == UserRole.USER) throw new RuntimeException("marilene");
+        if(user.getTasks().stream().noneMatch(task -> task.getId().equals(id)) && user.getRole() == UserRole.USER) throw new NoSuchElementException();
+
+        if(this.taskRepository.findById(id).isEmpty()) throw new NoSuchElementException();
 
         this.taskRepository.deleteById(id);
     }
